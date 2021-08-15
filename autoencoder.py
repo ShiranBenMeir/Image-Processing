@@ -9,7 +9,7 @@ import torch.nn.functional as F
 
 IMGSIZE = 64
 criterion = nn.MSELoss()
-latent_dims= 10
+latent_dims= 5
 
 class Encoder(nn.Module):
     def __init__(self, latent_dims):

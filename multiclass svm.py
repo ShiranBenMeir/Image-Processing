@@ -89,7 +89,7 @@ from numpy import reshape
 import seaborn as sns
 import pandas as pd
 
-'''''
+##runing t-sne and check for different aixes.
 tsne = TSNE(n_components=3, verbose=1, random_state=123)
 z = tsne.fit_transform(x_train)
 
@@ -99,11 +99,6 @@ df["comp-1"] = z[:,0]
 df["comp-2"] = z[:,1]
 df["comp-3"] = z[:,2]
 
-df = pd.DataFrame()
-df["y"] = y_train
-df["comp-1"] = z[:, 0]
-df["comp-2"] = z[:, 1]
-df["comp-3"] = z[:, 2]
 
 sns.scatterplot(x="comp-1", y="comp-2", hue=df.y.tolist(),
                 palette=sns.color_palette("hls", 4),
@@ -121,13 +116,15 @@ sns.scatterplot(x="comp-2", y="comp-3", hue=df.y.tolist(),
 plt.show()
 
 
-'''''
+## run SVM algorithm
+#create SVM model
 rbf = svm.SVC(kernel='rbf', gamma=0.5, C=0.1).fit(x_train, y_train)
 poly = svm.SVC(kernel='poly', degree=3, C=1).fit(x_train, y_train)
-
+#use the model for prediction
 poly_pred = poly.predict(x_test)
 rbf_pred = rbf.predict(x_test)
 
+#calculate accuracy
 poly_accuracy = accuracy_score(y_test, poly_pred)
 poly_f1 = f1_score(y_test, poly_pred, average='weighted')
 print('Accuracy : ', "%.2f" % (poly_accuracy*100))
@@ -135,26 +132,3 @@ print('F1 (Polynomial Kernel): ', "%.2f" % (poly_f1*100))
 multiclass_roc_auc_score(y_test, poly_pred)
 
 
-'''''
-# Compute ROC curve and ROC area for each class
-fpr = dict()
-tpr = dict()
-roc_auc = dict()
-for i in range(4):
-    fpr[i], tpr[i], _ = roc_curve(y_test[:, i], poly_pred[:, i])
-    roc_auc[i] = auc(fpr[i], tpr[i])
-
-# Plot of a ROC curve for a specific class
-for i in range(4):
-    plt.figure()
-    plt.plot(fpr[i], tpr[i], label='ROC curve (area = %0.2f)' % roc_auc[i])
-    plt.plot([0, 1], [0, 1], 'k--')
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('Receiver operating characteristic example')
-    plt.legend(loc="lower right")
-    plt.show()
-
-'''''
